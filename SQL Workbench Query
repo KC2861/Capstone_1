@@ -5,12 +5,12 @@ USE sample_sales;
 -- Q1: Total revenue, start date, end date
 
 SELECT SUM(Sale_Amount) AS total_revenue,
-       MIN(Transaction_Date) AS start_date,
-       MAX(Transaction_Date) AS end_date
-FROM Store_Sales;
+YEAR(Transaction_Date) AS sales_year
+FROM Store_Sales
+GROUP BY sales_year
+ORDER BY sales_year;
 
 -- Answer: Texas total revenue is $3,417,850.01 from 12/31/2021 to 12/30/2025
-
 
 
 
@@ -69,11 +69,12 @@ ORDER BY sales_month, Inventory_Categories.Category;
 
 
 -- Answer: Technology & Accessories (120) has the highest average roughly $446 to $502 
--- Category 100 is second, averaging about $170 to $183
--- Category 110 also has some of the most transactions between months April to June about $509 to $519
--- Categories 115,125, and 130 have some of the lowest averages at around $27 to $34
+-- Textbooks (100) is second, averaging about $170 to $183. 
+-- Stationery and supplies (110) has the most transactions, about 509 to 519 a month but has the lowest average sale at about $10.
+-- Art supplies (115), Books (125), and Apparel and Merchandise (130) average around $27 to $34 per sale.
 
 
+SELECT * FROM Inventory_Categories;
 
 -- Q5: Store ranking
 
@@ -86,7 +87,8 @@ GROUP BY Store_Locations.StoreId
 ORDER BY total_revenue DESC; 
 
 -- Answer: Texas Stores ranked by total revenue, highest to lowest 
--- store 905 ranks first, with total revenue of $637,818.90 so store 905 ranks first. 
+-- Store 905 ranks first, with total revenue of $637,818.90 so store 905 ranks first. 
+-- Store 907 ranks last with $54,444.05 below the other stores
 
 -- Q6: Recommendation 
 
