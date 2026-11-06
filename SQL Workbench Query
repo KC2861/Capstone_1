@@ -1,0 +1,96 @@
+-- Sales territory: Texas
+-- Kamran Cakir
+USE sample_sales;
+
+-- Q1: Total revenue, start date, end date
+
+SELECT SUM(Sale_Amount) AS total_revenue,
+       MIN(Transaction_Date) AS start_date,
+       MAX(Transaction_Date) AS end_date
+FROM Store_Sales;
+
+-- Answer: Texas total revenue is $3,417,850.01 from 12/31/2021 to 12/30/2025
+
+
+
+
+-- Q2: Revenue by year and month
+
+SELECT SUM(Sale_Amount) AS total_revenue,
+       YEAR(Transaction_Date) AS sales_year,
+       MONTH(Transaction_Date) AS sales_month
+FROM Store_Sales 
+GROUP BY sales_year, sales_month
+ORDER BY sales_year, sales_month;
+
+
+-- Answer: Texas monthly revenue runs from January 2022 through December 2025 (48 months)
+-- Month: October 2025 at $168,955.72. Lowest month: January 2022 at $40,857.20.
+-- I notice that it grows each year and 2025 months are above the earlier years.
+
+
+
+
+-- Q3: Territory vs. region revenue 
+
+SELECT Store_Locations.State, SUM(Store_Sales.Sale_Amount) AS total_revenue
+FROM Store_Sales
+JOIN Store_Locations
+    ON Store_Sales.Store_ID = Store_Locations.StoreId
+JOIN Management
+    ON Store_Locations.State = Management.State
+WHERE Management.Region = 'South'
+GROUP BY Store_Locations.State;
+
+-- Answer: Texas revenue is $3,417,850.01 of the South region's $7,996,850.12 (about 42.7%)
+-- Florida is larger at $3,930,187.55 and South Carolina is smallest at $648,812.56
+-- This tells me that Texas is the second largest state in the South, behind Florida by about $512,338
+
+
+
+-- Q4: Transactions per month and average amount by category
+
+SELECT MONTH(Store_Sales.Transaction_Date) AS sales_month,
+       Inventory_Categories.Categoryid,
+       COUNT(*) AS total_transactions,
+       AVG(Store_Sales.Sale_Amount) AS average_amount
+
+FROM Store_Sales
+JOIN Store_Locations
+    ON Store_Sales.Store_ID = Store_Locations.StoreId
+JOIN Products
+    ON Store_Sales.Prod_Num = Products.ProdNum
+JOIN Inventory_Categories
+    ON Products.Categoryid = Inventory_Categories.Categoryid
+
+WHERE Store_Locations.State = 'Texas'
+GROUP BY sales_month, Inventory_Categories.Categoryid, Inventory_Categories.Category
+ORDER BY sales_month, Inventory_Categories.Category; 
+
+
+-- Answer: Technology & Accessories (120) has the highest average roughly $446 to $502 
+-- Category 100 is second, averaging about $170 to $183
+-- Category 110 also has some of the most transactions between months April to June about $509 to $519
+-- Categories 115,125, and 130 have some of the lowest averages at around $27 to $34
+
+
+
+-- Q5: Store ranking
+
+SELECT Store_Locations.StoreId, SUM(Store_Sales.Sale_Amount) AS total_revenue
+FROM Store_Sales
+JOIN Store_Locations
+    ON Store_Sales.Store_ID = Store_Locations.StoreId
+WHERE Store_Locations.State = 'Texas' 
+GROUP BY Store_Locations.StoreId
+ORDER BY total_revenue DESC; 
+
+-- Answer: Texas Stores ranked by total revenue, highest to lowest 
+-- store 905 ranks first, with total revenue of $637,818.90 so store 905 ranks first. 
+
+-- Q6: Recommendation 
+
+-- Answer:
+-- I think we should focus on Technology & Accessories 120 in Texas next quarter because it has the highest average sales. We should make
+-- sure stores have enough of these products and try some promotions to help increase sales. We can also check which stores
+-- need more help and see if sales improve. 
